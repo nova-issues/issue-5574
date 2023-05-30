@@ -14,5 +14,19 @@ use Illuminate\Support\Facades\Route;
 */
 
 Route::get('/', function () {
-    return view('welcome');
+
+    $queryCallback = fn ($query) => $query->where('created_at', '<', now()->subDays(1));
+
+    dump(
+        'database', App\Models\User::search('example')->query($queryCallback)->take(200)->paginate(25)->items()
+    );
+
+
+    dump(
+        'meilisearch', App\Models\UserWithMeilisearch::search('example')->query($queryCallback)->take(200)->paginate(25)->items()
+    );
+
+    dump(
+        'algolia', App\Models\UserWithAlgolia::search('example')->query($queryCallback)->take(200)->paginate(25)->items()
+    );
 });
